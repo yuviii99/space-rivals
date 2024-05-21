@@ -6,6 +6,7 @@ import os
 WIDTH, HEIGHT = 1200, 800
 
 FPS = 60
+VELOCITY = 5
 
 # Actual Game Window
 GAME_WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -21,13 +22,38 @@ YELLOW_SPACESHIP = pygame.transform.rotate(pygame.transform.scale(YELLOW_SPACESH
 RED_SPACESHIP = pygame.transform.rotate(pygame.transform.scale(RED_SPACESHIP_IMAGE, (SPACESHIP_WIDTH, SPACESHIP_HEIGHT)), 270)
 
 
-def draw_window():
+def handle_yellow_movement(keys_pressed, yellow):
+    if keys_pressed[pygame.K_a]:
+        yellow.x -= VELOCITY
+    if keys_pressed[pygame.K_d]:
+        yellow.x += VELOCITY
+    if keys_pressed[pygame.K_w]:
+        yellow.y -= VELOCITY
+    if keys_pressed[pygame.K_s]:
+        yellow.y += VELOCITY
+
+
+def handle_red_movement(keys_pressed, red):
+    if keys_pressed[pygame.K_LEFT]:
+        red.x -= VELOCITY
+    if keys_pressed[pygame.K_RIGHT]:
+        red.x += VELOCITY
+    if keys_pressed[pygame.K_UP]:
+        red.y -= VELOCITY
+    if keys_pressed[pygame.K_DOWN]:
+        red.y += VELOCITY
+
+def draw_window(red, yellow):
     GAME_WINDOW.fill(WHITE)
-    GAME_WINDOW.blit(YELLOW_SPACESHIP, (275, 400))
-    GAME_WINDOW.blit(RED_SPACESHIP, (925, 400))
+    GAME_WINDOW.blit(YELLOW_SPACESHIP, (yellow.x, yellow.y))
+    GAME_WINDOW.blit(RED_SPACESHIP, (red.x, red.y))
     pygame.display.update()
 
 def main():
+    
+    red = pygame.Rect(925, 350, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
+    yellow = pygame.Rect(275, 350, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
+    
     clock = pygame.time.Clock()
     run = True
     while run:
@@ -36,7 +62,14 @@ def main():
             # If user closes the window
             if event.type == pygame.QUIT:
                 run = False
-        draw_window()
+        
+        keys_pressed = pygame.key.get_pressed()
+        
+        # Yellow Spaceship Movement
+        handle_yellow_movement(keys_pressed, yellow)
+        handle_red_movement(keys_pressed, red)
+        
+        draw_window(red, yellow)
         
     pygame.quit()
     
